@@ -7,6 +7,11 @@ https://github.com/adasq/github-code-screenshot/blob/158f56eaac74c02879cf434a58a
 ### OUTPUT:
 ![screenshot of a source code](https://github.com/adasq/github-code-screenshot/blob/init/images/example.png)
 
+
+## Use it online
+
+https://github-shot.herokuapp.com/
+
 ## How to install?
 
 ### 1. Clone repo
