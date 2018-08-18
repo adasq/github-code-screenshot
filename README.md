@@ -1,10 +1,10 @@
 # github-code-screenshot
 Produce image based on github source code
 
-INPUT:
+### INPUT:
 https://github.com/adasq/github-code-screenshot/blob/158f56eaac74c02879cf434a58add69dab2c7b98/src/screen-producer.js#L15-L39
 
-OUTPUT:
+### OUTPUT:
 ![screenshot of a source code](https://github.com/adasq/github-code-screenshot/blob/init/images/example.png)
 
 ## How to install?
