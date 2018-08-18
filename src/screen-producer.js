@@ -4,13 +4,27 @@ const request = require('request')
 const _ = require('lodash')
 const parse = require('url-parse')
 
+const requestOpts = {
+    json: true,
+    headers: {
+        'User-Agent': 'Github-Code-Screenshot',
+    }
+}
+
+if (process.env.USER && process.env.TOKEN) {
+    requestOpts.auth = {
+        user: process.env.USER,
+        pass: process.env.TOKEN,
+    }
+}
+
 let page
-;(async () => {
-    const browser = await puppeteer.launch({
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    })
-    page = await browser.newPage()
-})()
+    ; (async () => {
+        const browser = await puppeteer.launch({
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        })
+        page = await browser.newPage()
+    })()
 
 const produceImageByGithubSnippetUrl = async (githubSnippetUrl) => {
     console.log(githubSnippetUrl)
@@ -42,14 +56,14 @@ module.exports = produceImageByGithubSnippetUrl
 
 // ----------------------------------------------
 
-function getCarbonUrlBySourceCode (code) {
+function getCarbonUrlBySourceCode(code) {
     return `https://carbon.now.sh/?bg=none&t=seti&wt=none&l=javascript&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=48px&ph=32px&ln=false&fm=Hack&fs=18px&lh=133%25&si=false&code=${code}&es=2x&wm=false&ts=false`
 }
 
 function removeTemporaryFile() {
     try {
         fs.unlinkSync('./carbon.png')
-    } catch (e) {}
+    } catch (e) { }
 }
 
 function getGithubApiUrlByGithubSnippetUrl(ghSelectionUrl) {
@@ -67,17 +81,7 @@ function decodeBase64(input) {
 async function getGithubFileMetaByUrl(url) {
     return new Promise((resolve, reject) => {
         request(
-            {
-                url,
-                json: true,
-                auth: {
-                    user: process.env.USER,
-                    pass: process.env.TOKEN,
-                },
-                headers: {
-                    'User-Agent': 'Github-Code-Screenshot',
-                },
-            },
+            { url, ...requestOpts },
             (err, resp, body) => {
                 if (err || !body || !body.content) {
                     return reject('could not retrive github code')
