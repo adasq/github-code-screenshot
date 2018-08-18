@@ -13,13 +13,10 @@
   "license": "ISC",
   "dependencies": {
     "better-queue": "3.8.10",
-    "datauri": "1.1.0",
     "express": "4.16.3",
-    "filereader": "0.10.3",
     "lodash": "4.17.10",
     "prettier": "1.14.2",
     "puppeteer": "1.5.0",
-    "read-blob": "1.1.0",
     "request": "2.87.0",
     "url-parse": "1.4.3"
   },
