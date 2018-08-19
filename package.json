@@ -1,0 +1,26 @@
+{
+  "name": "github-code-screenshot",
+  "version": "0.0.1",
+  "description": "Produce image based on github source code",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "deploy": "git push github-shot init:master -f",
+    "lint": "prettier --arrow-parens always --single-quote --tab-width 4 --no-semi --trailing-comma es5 --write './**/*.js'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "adasq",
+  "license": "ISC",
+  "dependencies": {
+    "better-queue": "3.8.10",
+    "express": "4.16.3",
+    "lodash": "4.17.10",
+    "prettier": "1.14.2",
+    "puppeteer": "1.5.0",
+    "request": "2.87.0",
+    "url-parse": "1.4.3"
+  },
+  "engines": {
+    "node": "8.9.4"
+  }
+}
