@@ -57,7 +57,7 @@ module.exports = produceImageByGithubSnippetUrl
 // ----------------------------------------------
 
 function getCarbonUrlBySourceCode(code) {
-    return `https://carbon.now.sh/?bg=none&t=seti&wt=none&l=javascript&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=48px&ph=32px&ln=false&fm=Hack&fs=18px&lh=133%25&si=false&code=${code}&es=2x&wm=false&ts=false`
+    return `https://carbon.now.sh/?bg=none&t=seti&wt=none&l=auto&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=48px&ph=32px&ln=false&fm=Hack&fs=18px&lh=133%25&si=false&code=${code}&es=2x&wm=false&ts=false`
 }
 
 function removeTemporaryFile() {
