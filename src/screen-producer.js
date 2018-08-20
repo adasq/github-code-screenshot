@@ -64,7 +64,7 @@ module.exports = produceImageByGithubSnippetUrl
  */
 function getCarbonUrlBySourceCode(code, codeSnippetFileExtension = '') {
     const lang = highlightService.getCarbonLangByFileExtension(codeSnippetFileExtension)
-    const url = `https://carbon.now.sh/?bg=none&t=seti&wt=none&l=${lang}&ds=true&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=48px&ph=32px&ln=false&fm=Hack&fs=18px&lh=133%25&si=false&code=${code}&es=2x&wm=false&ts=false`
+    const url = `https://carbon.now.sh/?bg=none&t=seti&wt=none&l=${encodeURIComponent(lang)}&ds=true&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=48px&ph=32px&ln=false&fm=Hack&fs=18px&lh=133%25&si=false&code=${code}&es=2x&wm=false&ts=false`
     return url
 }
 
