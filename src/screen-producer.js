@@ -3,7 +3,9 @@ const puppeteer = require('puppeteer')
 const request = require('request')
 const _ = require('lodash')
 const parse = require('url-parse')
-
+const fileExtension = require('file-extension');
+const highlightService = require('./highlight-service');
+ 
 const requestOpts = {
     json: true,
     headers: {
@@ -27,14 +29,13 @@ let page
     })()
 
 const produceImageByGithubSnippetUrl = async (githubSnippetUrl) => {
-    console.log(githubSnippetUrl)
     removeTemporaryFile()
 
     const githubApiUrl = getGithubApiUrlByGithubSnippetUrl(githubSnippetUrl)
 
-    console.log(githubApiUrl)
-
     const githubFileMeta = await getGithubFileMetaByUrl(githubApiUrl)
+
+    const codeSnippetFileExtension = fileExtension(githubFileMeta.name); 
     const plainSourceCode = decodeBase64(githubFileMeta.content)
     const plainSourceCodeLines = plainSourceCode.split('\n')
 
@@ -47,7 +48,7 @@ const produceImageByGithubSnippetUrl = async (githubSnippetUrl) => {
     )
     const joinedSelectedLines = encodeURIComponent(selectedLines.join('\n'))
 
-    const carbonUrl = getCarbonUrlBySourceCode(joinedSelectedLines)
+    const carbonUrl = getCarbonUrlBySourceCode(joinedSelectedLines, codeSnippetFileExtension)
 
     await produceImageByCarbonUrl(carbonUrl)
 }
@@ -56,8 +57,15 @@ module.exports = produceImageByGithubSnippetUrl
 
 // ----------------------------------------------
 
-function getCarbonUrlBySourceCode(code) {
-    return `https://carbon.now.sh/?bg=none&t=seti&wt=none&l=auto&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=48px&ph=32px&ln=false&fm=Hack&fs=18px&lh=133%25&si=false&code=${code}&es=2x&wm=false&ts=false`
+/**
+ * it returns carbon service url based of code snippet and file extension
+ * @param {string} code 
+ * @param {string} codeSnippetFileExtension 
+ */
+function getCarbonUrlBySourceCode(code, codeSnippetFileExtension = '') {
+    const lang = highlightService.getCarbonLangByFileExtension(codeSnippetFileExtension)
+    const url = `https://carbon.now.sh/?bg=none&t=seti&wt=none&l=${lang}&ds=true&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=48px&ph=32px&ln=false&fm=Hack&fs=18px&lh=133%25&si=false&code=${code}&es=2x&wm=false&ts=false`
+    return url
 }
 
 function removeTemporaryFile() {
