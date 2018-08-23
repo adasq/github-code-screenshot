@@ -65,7 +65,9 @@ const produceImageByGithubSnippetUrl = async (githubSnippetUrl) => {
 
     const lang = highlightService.getCarbonLangByFileExtension(codeSnippetFileExtension)
     
-    return await produceImageByCarbonUrl(joinedSelectedLines, lang)
+    const base64FileString = await produceImageByCarbonUrl(joinedSelectedLines, lang)
+
+    return new Buffer(base64FileString.split(",")[1], 'base64');
 }
 
 module.exports = produceImageByGithubSnippetUrl
