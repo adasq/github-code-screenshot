@@ -86,6 +86,6 @@ module.exports = {
                 return langDescription.extension === extension;
             }
         });
-        return langDesc ? (langDesc.mime || langDesc.mode) : 'auto';
+        return langDesc || supportedLangs[0];
     }
 }

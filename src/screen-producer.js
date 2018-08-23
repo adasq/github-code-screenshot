@@ -64,7 +64,7 @@ const produceImageByGithubSnippetUrl = async (githubSnippetUrl) => {
     const joinedSelectedLines = selectedLines.join('\n')
 
     const lang = highlightService.getCarbonLangByFileExtension(codeSnippetFileExtension)
-
+    
     return await produceImageByCarbonUrl(joinedSelectedLines, lang)
 }
 
@@ -134,9 +134,11 @@ function getLinesRange(hash) {
 }
 
 async function produceImageByCarbonUrl(code, lang) {
+    console.log(lang)
     const links = await page.evaluate((code, lang) => {
         api.updateCode(code);
-        return api.getCarbonImage({ type: 'blob2', format: 'png' })
+        api.updateLanguage(lang)
+        return api.getCarbonImage({ format: 'png' })
       }, code, lang);
 
      return links;
