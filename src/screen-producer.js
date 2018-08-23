@@ -3,7 +3,9 @@ const puppeteer = require('puppeteer')
 const request = require('request')
 const _ = require('lodash')
 const parse = require('url-parse')
-
+const fileExtension = require('file-extension');
+const highlightService = require('./highlight-service');
+ 
 const requestOpts = {
     json: true,
     headers: {
@@ -31,7 +33,7 @@ let page
             height: 1000,
         })
     
-        await page.goto(getCarbonUrlBySourceCode('test'), {
+        await page.goto(getCarbonUrlBySourceCode(), {
             waitUntil: 'load',
         })
     
@@ -42,14 +44,13 @@ let page
     })()
 
 const produceImageByGithubSnippetUrl = async (githubSnippetUrl) => {
-    console.log(githubSnippetUrl)
     removeTemporaryFile()
 
     const githubApiUrl = getGithubApiUrlByGithubSnippetUrl(githubSnippetUrl)
 
-    console.log(githubApiUrl)
-
     const githubFileMeta = await getGithubFileMetaByUrl(githubApiUrl)
+
+    const codeSnippetFileExtension = fileExtension(githubFileMeta.name); 
     const plainSourceCode = decodeBase64(githubFileMeta.content)
     const plainSourceCodeLines = plainSourceCode.split('\n')
 
@@ -60,20 +61,19 @@ const produceImageByGithubSnippetUrl = async (githubSnippetUrl) => {
         lineFrom - 1,
         lineTo,
     )
-    const joinedSelectedLines = encodeURIComponent(selectedLines.join('\n'))
+    const joinedSelectedLines = selectedLines.join('\n')
 
-    const carbonUrl = getCarbonUrlBySourceCode(joinedSelectedLines)
+    const lang = highlightService.getCarbonLangByFileExtension(codeSnippetFileExtension)
 
-    return await produceImageByCarbonUrl(selectedLines.join('\n'))
+    return await produceImageByCarbonUrl(joinedSelectedLines, lang)
 }
 
 module.exports = produceImageByGithubSnippetUrl
 
 // ----------------------------------------------
 
-function getCarbonUrlBySourceCode(code) {
-    return `http://localhost:3000/carbon?bg=none&t=seti&wt=none&l=javascript&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=48px&ph=32px&ln=false&fm=Hack&fs=18px&lh=133%25&si=false&code=${code}&es=2x&wm=false&ts=false`
-    // return `http://localhost:3000?bg=none&t=seti&wt=none&l=javascript&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=48px&ph=32px&ln=false&fm=Hack&fs=18px&lh=133%25&si=false&code=${code}&es=2x&wm=false&ts=false`
+function getCarbonUrlBySourceCode() {
+    return `http://localhost:3000/carbon?bg=none&t=seti&wt=none&l=javascript&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=48px&ph=32px&ln=false&fm=Hack&fs=18px&lh=133%25&si=false&code=start&es=2x&wm=false&ts=false`
 }
 
 function removeTemporaryFile() {
@@ -133,25 +133,11 @@ function getLinesRange(hash) {
     return [+startLineIndex, +endLineIndex]
 }
 
-async function produceImageByCarbonUrl(code) {
-
-    const saveImageTrigger = await page.waitForSelector(
-        '[aria-labelledby="downshift-2-label"]'
-    )
-    // await saveImageTrigger.click()
-
-    // const pngExportTrigger = await page.$('#downshift-2-item-0')
-    // const svgExportTrigger = await page.$('#downshift-2-item-1')
-    // await pngExportTrigger.click()
-
-    const links = await page.evaluate((code) => {
+async function produceImageByCarbonUrl(code, lang) {
+    const links = await page.evaluate((code, lang) => {
         api.updateCode(code);
         return api.getCarbonImage({ type: 'blob2', format: 'png' })
-        //.then(a => console.log(a))
-        //api.save();
-      }, code);
+      }, code, lang);
 
      return links;
-   
-    // await page.waitFor(10 * 1000)
 }
