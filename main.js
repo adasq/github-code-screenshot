@@ -10,4 +10,6 @@ app.get('/', require('./src/routes/home'))
 app.get('/produce', require('./src/routes/produce'))
 app.get('/stats', require('./src/routes/stats'))
 
+app.use('/carbon', express.static('out'))
+
 setInterval(() => request('https://github-shot.herokuapp.com/'), 1000 * 60 * 15)
