@@ -6,15 +6,17 @@ const produceScreen = require('./screen-producer')
 
 const queue = new Queue(async ({ url, res }, cb) => {
     cb = _.once(cb)
-
     try {
-        await produceScreen(url)
-        fs.createReadStream('carbon.png')
-            .pipe(res.type('png'))
-            .on('finish', () => {
-                cb(null)
-            })
-        setTimeout(() => cb(null), 2000)
+        const file = await produceScreen(url);
+        var im = file.split(",")[1];
+        var img = new Buffer(im, 'base64');
+        
+        res.writeHead(200, {
+           'Content-Type': 'image/png',
+           'Content-Length': img.length
+        });
+        res.end(img);
+        cb(null);
     } catch (err) {
         res.status(500).send(err.toString())
         cb(err)

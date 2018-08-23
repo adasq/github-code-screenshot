@@ -21,9 +21,24 @@ if (process.env.USER && process.env.TOKEN) {
 let page
     ; (async () => {
         const browser = await puppeteer.launch({
+            headless: false,
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
         })
         page = await browser.newPage()
+
+        await page.setViewport({
+            width: 1600,
+            height: 1000,
+        })
+    
+        await page.goto(getCarbonUrlBySourceCode('test'), {
+            waitUntil: 'load',
+        })
+    
+        await page._client.send('Page.setDownloadBehavior', {
+            behavior: 'allow',
+            downloadPath: `${process.cwd()}/`,
+        })
     })()
 
 const produceImageByGithubSnippetUrl = async (githubSnippetUrl) => {
@@ -49,7 +64,7 @@ const produceImageByGithubSnippetUrl = async (githubSnippetUrl) => {
 
     const carbonUrl = getCarbonUrlBySourceCode(joinedSelectedLines)
 
-    await produceImageByCarbonUrl(carbonUrl)
+    return await produceImageByCarbonUrl(selectedLines.join('\n'))
 }
 
 module.exports = produceImageByGithubSnippetUrl
@@ -57,7 +72,8 @@ module.exports = produceImageByGithubSnippetUrl
 // ----------------------------------------------
 
 function getCarbonUrlBySourceCode(code) {
-    return `https://carbon.now.sh/?bg=none&t=seti&wt=none&l=javascript&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=48px&ph=32px&ln=false&fm=Hack&fs=18px&lh=133%25&si=false&code=${code}&es=2x&wm=false&ts=false`
+    return `http://localhost:3000/carbon?bg=none&t=seti&wt=none&l=javascript&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=48px&ph=32px&ln=false&fm=Hack&fs=18px&lh=133%25&si=false&code=${code}&es=2x&wm=false&ts=false`
+    // return `http://localhost:3000?bg=none&t=seti&wt=none&l=javascript&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=48px&ph=32px&ln=false&fm=Hack&fs=18px&lh=133%25&si=false&code=${code}&es=2x&wm=false&ts=false`
 }
 
 function removeTemporaryFile() {
@@ -117,29 +133,25 @@ function getLinesRange(hash) {
     return [+startLineIndex, +endLineIndex]
 }
 
-async function produceImageByCarbonUrl(carbonUrl) {
-    await page.setViewport({
-        width: 1600,
-        height: 1000,
-    })
-
-    await page.goto(carbonUrl, {
-        waitUntil: 'load',
-    })
-
-    await page._client.send('Page.setDownloadBehavior', {
-        behavior: 'allow',
-        downloadPath: `${process.cwd()}/`,
-    })
+async function produceImageByCarbonUrl(code) {
 
     const saveImageTrigger = await page.waitForSelector(
         '[aria-labelledby="downshift-2-label"]'
     )
-    await saveImageTrigger.click()
+    // await saveImageTrigger.click()
 
-    const pngExportTrigger = await page.$('#downshift-2-item-0')
-    const svgExportTrigger = await page.$('#downshift-2-item-1')
-    await pngExportTrigger.click()
+    // const pngExportTrigger = await page.$('#downshift-2-item-0')
+    // const svgExportTrigger = await page.$('#downshift-2-item-1')
+    // await pngExportTrigger.click()
 
-    await page.waitFor(2000)
+    const links = await page.evaluate((code) => {
+        api.updateCode(code);
+        return api.getCarbonImage({ type: 'blob2', format: 'png' })
+        //.then(a => console.log(a))
+        //api.save();
+      }, code);
+
+     return links;
+   
+    // await page.waitFor(10 * 1000)
 }

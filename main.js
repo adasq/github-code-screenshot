@@ -11,5 +11,6 @@ app.get('/produce', require('./src/routes/produce'))
 app.get('/stats', require('./src/routes/stats'))
 
 app.use('/carbon', express.static('out'))
+// app.use('/carbon', express.static('../carbon/out'))
 
 setInterval(() => request('https://github-shot.herokuapp.com/'), 1000 * 60 * 15)
