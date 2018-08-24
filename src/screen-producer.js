@@ -5,6 +5,7 @@ const _ = require('lodash')
 const parse = require('url-parse')
 const fileExtension = require('file-extension');
 const highlightService = require('./highlight-service');
+const ENV = require('./environment');
  
 const requestOpts = {
     json: true,
@@ -23,7 +24,7 @@ if (process.env.USER && process.env.TOKEN) {
 let page
     ; (async () => {
         const browser = await puppeteer.launch({
-            headless: true,
+            headless: ENV.PROD,
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
         })
         page = await browser.newPage()
@@ -44,8 +45,6 @@ let page
     })()
 
 const produceImageByGithubSnippetUrl = async (githubSnippetUrl) => {
-    removeTemporaryFile()
-
     const githubApiUrl = getGithubApiUrlByGithubSnippetUrl(githubSnippetUrl)
 
     const githubFileMeta = await getGithubFileMetaByUrl(githubApiUrl)
@@ -75,13 +74,7 @@ module.exports = produceImageByGithubSnippetUrl
 // ----------------------------------------------
 
 function getCarbonUrlBySourceCode() {
-    return `http://localhost:${process.env.PORT || 3000}/carbon?bg=none&t=seti&wt=none&l=javascript&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=48px&ph=32px&ln=false&fm=Hack&fs=18px&lh=133%25&si=false&code=start&es=2x&wm=false&ts=false`
-}
-
-function removeTemporaryFile() {
-    try {
-        fs.unlinkSync('./carbon.png')
-    } catch (e) { }
+    return `http://localhost:${ENV.PORT}/carbon?bg=none&t=seti&wt=none&l=javascript&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=48px&ph=32px&ln=false&fm=Hack&fs=18px&lh=133%25&si=false&code=start&es=2x&wm=false&ts=false`
 }
 
 function getGithubApiUrlByGithubSnippetUrl(ghSelectionUrl) {

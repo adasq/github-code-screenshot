@@ -1,5 +1,6 @@
 const express = require('express')
 const request = require('request')
+const ENV = require('./src/environment')
 
 // server setup
 const app = express()
@@ -12,4 +13,4 @@ app.get('/stats', require('./src/routes/stats'))
 
 app.use('/carbon', express.static('out'))
 
-setInterval(() => request('https://github-shot.herokuapp.com/'), 1000 * 60 * 15)
+ENV.PROD && setInterval(() => request('https://github-shot.herokuapp.com/'), 1000 * 60 * 15)
