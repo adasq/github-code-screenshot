@@ -10,4 +10,18 @@ app.get('/', require('./src/routes/home'))
 app.get('/produce', require('./src/routes/produce'))
 app.get('/stats', require('./src/routes/stats'))
 
-setInterval(() => request('https://github-shot.herokuapp.com/'), 1000 * 60 * 15)
+
+const url = `http://localhost:${process.env.PORT}/stats`;
+const url2 = `http://0.0.0.0:${process.env.PORT}/stats`;
+
+setInterval(() => request(url, (err, resp, body) => {
+    console.log(url)
+    console.log(err)
+    console.log(body)
+}), 1000)
+
+setInterval(() => request(url2, (err, resp, body) => {
+    console.log(url2)
+    console.log(err)
+    console.log(body)
+}), 1000)
