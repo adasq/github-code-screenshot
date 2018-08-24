@@ -75,7 +75,7 @@ module.exports = produceImageByGithubSnippetUrl
 // ----------------------------------------------
 
 function getCarbonUrlBySourceCode() {
-    return `http://localhost:3000/carbon?bg=none&t=seti&wt=none&l=javascript&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=48px&ph=32px&ln=false&fm=Hack&fs=18px&lh=133%25&si=false&code=start&es=2x&wm=false&ts=false`
+    return `http://localhost:${process.env.PORT || 3000}/carbon?bg=none&t=seti&wt=none&l=javascript&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=48px&ph=32px&ln=false&fm=Hack&fs=18px&lh=133%25&si=false&code=start&es=2x&wm=false&ts=false`
 }
 
 function removeTemporaryFile() {
