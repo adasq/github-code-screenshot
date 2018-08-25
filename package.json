@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node main.js",
     "deploy": "git push github-shot local-carbon:master -f",
-    "lint": "prettier --arrow-parens always --single-quote --tab-width 4 --no-semi --trailing-comma es5 --write './**/*.js'",
+    "lint": "prettier --arrow-parens always --single-quote --tab-width 4 --no-semi --trailing-comma es5 --write './src/*.js'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "adasq",

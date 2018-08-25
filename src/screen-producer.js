@@ -3,16 +3,16 @@ const puppeteer = require('puppeteer')
 const request = require('request')
 const _ = require('lodash')
 const parse = require('url-parse')
-const fileExtension = require('file-extension');
-const highlightService = require('./highlight-service');
-const ENV = require('./environment');
+const fileExtension = require('file-extension')
+const highlightService = require('./highlight-service')
+const ENV = require('./environment')
 
 // prepare headers for a purpose of calling github API
 const requestOpts = {
     json: true,
     headers: {
         'User-Agent': 'Github-Code-Screenshot',
-    }
+    },
 }
 
 if (process.env.USER && process.env.TOKEN) {
@@ -24,55 +24,56 @@ if (process.env.USER && process.env.TOKEN) {
 
 // it initializes internal browser and navigates its page into a local instance of carbon service
 let page
-    ; (async () => {
-        const browser = await puppeteer.launch({
-            headless: ENV.PROD,
-            args: ['--no-sandbox', '--disable-setuid-sandbox'],
-        })
-        page = await browser.newPage()
+;(async () => {
+    const browser = await puppeteer.launch({
+        headless: ENV.PROD,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    })
+    page = await browser.newPage()
 
-        await page.setViewport({
-            width: 1600,
-            height: 1000,
-        })
-    
-        await page.goto(getCarbonUrlBySourceCode(), {
-            waitUntil: 'load',
-        })
-    
-        await page._client.send('Page.setDownloadBehavior', {
-            behavior: 'allow',
-            downloadPath: `${process.cwd()}/`,
-        })
-    })()
+    await page.setViewport({
+        width: 1600,
+        height: 1000,
+    })
 
-    /**
-     * It produces base64 Buffer containing image based on passed Github snippet url
-     * @param {string} githubSnippetUrl 
-     */
+    await page.goto(getCarbonUrlBySourceCode(), {
+        waitUntil: 'load',
+    })
+
+    await page._client.send('Page.setDownloadBehavior', {
+        behavior: 'allow',
+        downloadPath: `${process.cwd()}/`,
+    })
+})()
+
+/**
+ * It produces base64 Buffer containing image based on passed Github snippet url
+ * @param {string} githubSnippetUrl
+ */
 const produceImageByGithubSnippetUrl = async (githubSnippetUrl) => {
     const githubApiUrl = getGithubApiUrlByGithubSnippetUrl(githubSnippetUrl)
 
     const githubFileMeta = await getGithubFileMetaByUrl(githubApiUrl)
 
-    const codeSnippetFileExtension = fileExtension(githubFileMeta.name); 
+    const codeSnippetFileExtension = fileExtension(githubFileMeta.name)
     const plainSourceCode = decodeBase64(githubFileMeta.content)
     const plainSourceCodeLines = plainSourceCode.split('\n')
 
     const [lineFrom, lineTo] = parseGithubSnippetUrl(githubSnippetUrl).lines
 
-    const selectedLines = _.slice(
-        plainSourceCodeLines,
-        lineFrom - 1,
-        lineTo,
-    )
+    const selectedLines = _.slice(plainSourceCodeLines, lineFrom - 1, lineTo)
     const joinedSelectedLines = selectedLines.join('\n')
 
-    const lang = highlightService.getCarbonLangByFileExtension(codeSnippetFileExtension)
-    
-    const base64FileString = await produceImageByCarbonUrl(joinedSelectedLines, lang)
+    const lang = highlightService.getCarbonLangByFileExtension(
+        codeSnippetFileExtension
+    )
 
-    return new Buffer(base64FileString.split(",")[1], 'base64');
+    const base64FileString = await produceImageByCarbonUrl(
+        joinedSelectedLines,
+        lang
+    )
+
+    return new Buffer(base64FileString.split(',')[1], 'base64')
 }
 
 module.exports = produceImageByGithubSnippetUrl
@@ -83,12 +84,14 @@ module.exports = produceImageByGithubSnippetUrl
  * It returns local carbon url containing default screenshot styles configuration
  */
 function getCarbonUrlBySourceCode() {
-    return `http://localhost:${ENV.PORT}/carbon?bg=none&t=seti&wt=none&l=javascript&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=48px&ph=32px&ln=false&fm=Hack&fs=18px&lh=133%25&si=false&code=start&es=2x&wm=false&ts=false`
+    return `http://localhost:${
+        ENV.PORT
+    }/carbon?bg=none&t=seti&wt=none&l=javascript&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=48px&ph=32px&ln=false&fm=Hack&fs=18px&lh=133%25&si=false&code=start&es=2x&wm=false&ts=false`
 }
 
 /**
  * It produces Github API url based on Github snippet url
- * @param {string} ghSelectionUrl 
+ * @param {string} ghSelectionUrl
  */
 function getGithubApiUrlByGithubSnippetUrl(ghSelectionUrl) {
     const info = parseGithubSnippetUrl(ghSelectionUrl)
@@ -99,8 +102,8 @@ function getGithubApiUrlByGithubSnippetUrl(ghSelectionUrl) {
 }
 
 /**
- * It parses input base64 string to a plain text 
- * @param {string} input 
+ * It parses input base64 string to a plain text
+ * @param {string} input
  */
 function decodeBase64(input) {
     return Buffer.from(input, 'base64').toString('ascii')
@@ -108,25 +111,22 @@ function decodeBase64(input) {
 
 /**
  * It retrives github meta info based on github API url
- * @param {string} url 
+ * @param {string} url
  */
 async function getGithubFileMetaByUrl(url) {
     return new Promise((resolve, reject) => {
-        request(
-            { url, ...requestOpts },
-            (err, resp, body) => {
-                if (err || !body || !body.content) {
-                    return reject('could not retrive github code')
-                }
-                resolve(body)
+        request({ url, ...requestOpts }, (err, resp, body) => {
+            if (err || !body || !body.content) {
+                return reject('could not retrive github code')
             }
-        )
+            resolve(body)
+        })
     })
 }
 
 /**
  * It parses github snipet url into details, i.e author, project.
- * @param {string} url 
+ * @param {string} url
  */
 function parseGithubSnippetUrl(url) {
     const url2 = parse(url, true)
@@ -143,7 +143,7 @@ function parseGithubSnippetUrl(url) {
 
 /**
  * It returns array containing lines range, i.e.: for '#L12-L31' it returns an array: [12, 21]
- * @param {string} hash 
+ * @param {string} hash
  */
 function getLinesRange(hash) {
     let match = /#L(\d+)-L(\d+)/i.exec(hash) || /#L(\d+)/i.exec(hash)
@@ -159,15 +159,19 @@ function getLinesRange(hash) {
 
 /**
  * It produces base64 Buffer containing image based on passed soure code and source code language details
- * @param {string} code 
- * @param {object} lang 
+ * @param {string} code
+ * @param {object} lang
  */
 async function produceImageByCarbonUrl(code, lang) {
-    const image = await page.evaluate((code, lang) => {
-        api.updateCode(code);
-        api.updateLanguage(lang)
-        return api.getCarbonImage({ format: 'png' })
-      }, code, lang);
+    const image = await page.evaluate(
+        (code, lang) => {
+            api.updateCode(code)
+            api.updateLanguage(lang)
+            return api.getCarbonImage({ format: 'png' })
+        },
+        code,
+        lang
+    )
 
-     return image;
+    return image
 }
