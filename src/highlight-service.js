@@ -1,5 +1,9 @@
 const _ = require('lodash');
 
+/*
+The following list is gathered from carbon service source code. 
+It has been extended by "extension"
+*/
 const supportedLangs = [
     { name: "Auto", mode: "auto", extension: "" },
     { name: "Apache", mode: "apache", mime: "text/apache", custom: !0 },
@@ -42,7 +46,6 @@ const supportedLangs = [
     { name: "Markdown", mode: "markdown", extension: "md" },
     { name: "Mathematica", mode: "mathematica", extension: "m?" },
     { name: "MATLAB/Octave", mode: "octave", mime: "text/x-octave", extension: "m?" },
-    // { name: "MySQL", mode: "sql", mime: "text/x-mysql", short: "mysql", extension: "sql" },
     { name: "NGINX", mode: "nginx" },
     { name: "Nim", mode: "nimrod", custom: !0, extension: "nim" },
     { name: "Objective C", mode: "clike", mime: "text/x-objectivec", short: "objectivec", extension: "m" },
@@ -71,7 +74,6 @@ const supportedLangs = [
     { name: "XML", mode: "xml", extension: "xml" },
     { name: "YAML", mode: "yaml", extension: "yaml" }
 ];
-
 
 module.exports = {
     /**
