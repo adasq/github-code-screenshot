@@ -4,7 +4,7 @@ const ENV = require('./src/environment')
 
 // server setup
 const app = express()
-app.listen(process.env.PORT || 3000)
+app.listen(ENV.PORT)
 
 // routes setup
 app.get('/', require('./src/routes/home'))
