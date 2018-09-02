@@ -5,16 +5,10 @@ const _ = require('lodash')
 const produceScreen = require('./screen-producer')
 
 const queue = new Queue(async ({ url, res }, cb) => {
-    cb = _.once(cb)
-
     try {
-        await produceScreen(url)
-        fs.createReadStream('carbon.png')
-            .pipe(res.type('png'))
-            .on('finish', () => {
-                cb(null)
-            })
-        setTimeout(() => cb(null), 2000)
+        const fileBuffer = await produceScreen(url)
+        res.type('png').end(fileBuffer)
+        cb(null)
     } catch (err) {
         res.status(500).send(err.toString())
         cb(err)

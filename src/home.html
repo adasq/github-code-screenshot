@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Github Screenshot Generator</title>
+      <style>
+         * {
+         padding: 0;
+         margin: 0;
+         }
+         html, body {
+         font-family: Arial; 
+         height: 100%;
+         background: #ffe8e8;
+         }
+         .row {
+         min-height: 100%;
+         display: flex;
+         }
+         .col {
+         align-self: center;
+         flex: 1 0 46%;
+         padding: 0 2%;
+         }
+         textarea {
+         width: 100%;
+         height: 80px;
+         }
+         h2 {
+         margin: 2% 0;
+         }
+         h1 {
+         text-align: center;
+         margin: 2% 0;
+         }
+         .textfield {
+         padding: 2% 0;
+         }
+      </style>
+   </head>
+   <body>
+      <div class="row">
+         <section class="col">
+            <h1>Your GitHub snippet code url</h1>
+            <form action="/produce" style="display: flex; flex-direction: column;">
+               <input id="link" class="textfield" onfocus="this.select();" type="text" name="url" placeholder="i.e.: https://github.com/steemit/steem/blob/master/libraries/schema/schema.cpp#L28-L44" value="https://github.com/steemit/steem/blob/master/libraries/schema/schema.cpp#L28-L44"><br>
+               <input type="submit">
+            </form>
+         </section>
+         <section class="col">
+            <h1>Copy & paste into your editor</h1>
+            <h2>Image:</h2>
+            <textarea id="image-textbox" class="textfield" onfocus="this.select();">At w3schools.com you will learn how to make a website. We offer free tutorials in all web development technologies.</textarea>
+            <h2>Image with caption:</h2>
+            <textarea id="image-with-caption-textbox" class="textfield" onfocus="this.select();">At w3schools.com you will learn how to make a website. We offer free tutorials in all web development technologies.</textarea>
+         </section>
+      </div>
+   </body>
+   <script>
+      onLinkChanged();
+      const linkElem = document.querySelector('#link');
+      
+      linkElem.focus();
+      
+      linkElem.onchange = onLinkChanged;
+      linkElem.oninput = onLinkChanged;
+      
+      function onLinkChanged() {
+          var githubSnippetUrl = document.querySelector('#link').value;
+          
+          try {
+              const embedded = prepareEmbededCodeByUrl(githubSnippetUrl);
+              document.querySelector('#image-textbox').value = embedded.image;
+              document.querySelector('#image-with-caption-textbox').value = embedded.imageWithCaption;
+          } catch(err) {
+              
+          }
+          
+      }
+      function prepareEmbededCodeByUrl(url) {
+          const { pathname, hash } = new URL(url)
+      
+          const lines = getLinesRange(hash);
+          const isMultiLine = lines[0] !== lines[1];
+      
+          function getLinesRange(hash) {
+              let match = /#L(\d+)-L(\d+)/i.exec(hash) || /#L(\d+)/i.exec(hash)
+      
+              if (!match) {
+                  return null;
+              }
+      
+              let [, startLineIndex, endLineIndex = startLineIndex] = match
+      
+              return [+startLineIndex, +endLineIndex]
+          }
+      
+          const imageUrl = `https://github-shot.herokuapp.com/produce?url=${encodeURIComponent(url)}`
+      
+          const [, , , , , ...file] = pathname.split('/')
+          const filePath = file.join('/');
+      
+          const lineText = isMultiLine ? `Lines ${lines.join(' to ')}` : `Line ${lines[0]}`;
+      
+          return {
+              image: `![${lineText} of '${filePath}' file](${imageUrl})`,
+              imageWithCaption: `![${lineText} of '${filePath}' file](${imageUrl})<center><h6>_Display on [github.com](${url})_</h6></center>`
+          }
+          
+          return embed;
+      }
+   </script>
+</html>
