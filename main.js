@@ -19,7 +19,7 @@ app.get('/proxy', (req, res) => {
     // send queue stats including average computation time
 
     return request({
-        url: 'https://cdn.x-kom.pl/i/img/promotions/hot-shot-small,,hs_2020_8_6_15_13_45.PNG',
+        url: req.query.url,
         headers: {
             'Referer': 'https://www.x-kom.pl/',
             'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
