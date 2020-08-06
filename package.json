@@ -15,7 +15,7 @@
     "better-queue": "3.8.10",
     "express": "^4.16.4",
     "file-extension": "4.0.5",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "prettier": "1.14.2",
     "puppeteer": "^1.15.0",
     "request": "2.87.0",
