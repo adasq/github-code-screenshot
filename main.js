@@ -20,7 +20,6 @@ app.get('/proxy', (req, res) => {
     res.writeHead(200, 'OK', {
         'Accept-Ranges': 'bytes',
         'Connection': 'keep-alive',
-        'Content-Length': 3 * 51668,
         'Server': 'nginx',
         'Content-Type': 'image/png',
         'Date': 'Thu, 06 Aug 2020 21:08:19 GMT',
