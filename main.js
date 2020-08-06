@@ -19,18 +19,15 @@ app.get('/proxy', (req, res) => {
     // send queue stats including average computation time
     res.writeHead(200, 'OK', {
         'Accept-Ranges': 'bytes',
-        'age': 4095,
-        'cache-control': 'max-age=28800',
         // 'Content-Disposition': 'inline; filename="aaaaa.png"',
-        // 'Content-Length': 51668,
+        'Content-Length': 3 * 51668,
         'set-cookie': 'a=1',
-        'server': '',
-        // 'Content-Type': 'image/png',
+        'server': 'nginx',
+        'Content-Type': 'image/png',
         'Date': 'Thu, 06 Aug 2020 21:08:19 GMT',
         'Etag': "167d6-5ac3aeb138326",
         'Last-Modified': 'Thu, 06 Aug 2020 19:58:55 GMT',
-        'status': 200,
-        'vary': 'Accept',
+        'X-DNS-Prefetch-Control': 'off'
     })
     request({
         url: req.query.url,
