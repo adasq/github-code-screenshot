@@ -19,10 +19,9 @@ app.get('/proxy', (req, res) => {
     // send queue stats including average computation time
     res.writeHead(200, 'OK', {
         'Accept-Ranges': 'bytes',
-        // 'Content-Disposition': 'inline; filename="aaaaa.png"',
+        'Connection': 'keep-alive',
         'Content-Length': 3 * 51668,
-        'set-cookie': 'a=1',
-        'server': 'nginx',
+        'Server': 'nginx',
         'Content-Type': 'image/png',
         'Date': 'Thu, 06 Aug 2020 21:08:19 GMT',
         'Etag': "167d6-5ac3aeb138326",
@@ -33,7 +32,7 @@ app.get('/proxy', (req, res) => {
         url: req.query.url,
         headers: {
             'Referer': 'https://www.x-kom.pl/',
-            'Accept': 'image/apng,image/*,*/*;q=0.8',
+            'Accept': 'image/png,*/*;q=0.8',
 
             'accept-language': 'pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7',
             'sec-fetch-dest': 'image',
