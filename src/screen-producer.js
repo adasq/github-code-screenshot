@@ -73,7 +73,7 @@ const produceImageByGithubSnippetUrl = async (githubSnippetUrl) => {
         lang
     )
 
-    return new Buffer(base64FileString.split(',')[1], 'base64')
+    return [`${githubFileMeta.path.replace(/\./g, '-')}[${lineFrom}-${lineTo}]`, new Buffer(base64FileString.split(',')[1], 'base64')]
 }
 
 module.exports = produceImageByGithubSnippetUrl
@@ -86,7 +86,7 @@ module.exports = produceImageByGithubSnippetUrl
 function getCarbonUrlBySourceCode() {
     return `http://localhost:${
         ENV.PORT
-    }/carbon?bg=none&t=seti&wt=none&l=javascript&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=48px&ph=32px&ln=true&fm=Hack&fs=18px&lh=133%25&si=false&code=start&es=2x&wm=false&ts=false`
+    }/carbon?bg=none&t=seti&wt=none&l=javascript&ds=true&dsyoff=10px&dsblur=10px&wc=true&wa=true&pv=20px&ph=20px&ln=true&fl=1&fm=Hack&fs=18px&lh=126%25&si=false&es=2x&wm=false`
 }
 
 /**
@@ -165,9 +165,9 @@ function getLinesRange(hash) {
 async function produceImageByCarbonUrl(code, lang) {
     const image = await page.evaluate(
         (code, lang) => {
-            api.updateCode(code)
-            api.updateLanguage(lang)
-            return api.getCarbonImage({ format: 'png' })
+            window.updateCode(code)
+            window.updateLanguage(lang)
+            return window.getCarbonImage({ format: 'png' })
         },
         code,
         lang

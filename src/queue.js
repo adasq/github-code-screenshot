@@ -6,7 +6,9 @@ const produceScreen = require('./screen-producer')
 
 const queue = new Queue(async ({ url, res }, cb) => {
     try {
-        const fileBuffer = await produceScreen(url)
+        const [fileName, fileBuffer] = await produceScreen(url)
+        console.log(fileName);
+        res.setHeader('Content-disposition', `filename=${fileName}.png`)
         res.type('png').end(fileBuffer)
         cb(null)
     } catch (err) {
