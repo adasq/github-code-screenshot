@@ -10,7 +10,7 @@ https://github.com/adasq/github-code-screenshot/blob/158f56eaac74c02879cf434a58a
 
 ## Use it online
 
-https://github-shot.herokuapp.com/
+https://github-code-screenshot.onrender.com/
 
 ## How to install?
 
