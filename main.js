@@ -43,5 +43,3 @@ app.get('/proxy', (req, res) => {
 })
 
 app.use('/carbon', express.static('out'))
-
-ENV.PROD && setInterval(() => request('https://github-shot.herokuapp.com/'), 1000 * 60 * 15)
